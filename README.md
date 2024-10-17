@@ -1,4 +1,3 @@
-```markdown
 # 🎥 Emotional State Detection Through Video
 
 This project implements an emotional state detection system that analyzes the emotions of a person from a video file. The system uses deep learning models to detect facial expressions from video frames and predict the corresponding emotional state, all while creating a seamless and interactive user experience. 🌟
@@ -114,4 +113,3 @@ These can be installed using the `requirements.txt` file.
 3. 🕰️ Wait for the video processing to complete.
 4. 🎥 The detected emotions will be overlaid on the faces in the video.
 5. 💾 Download the generated CSV file with emotion data for further analysis.
-```
