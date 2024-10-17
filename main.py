@@ -1,10 +1,10 @@
 # Importing the packages
 import cv2
-from keras.utils import img_to_array
+from keras.src.utils.image_utils import img_to_array
 import numpy as np
 import pandas as pd
-from keras.models import model_from_json
 import streamlit as st
+from keras._tf_keras.keras.models import load_model
 import os
 
 st.set_page_config("Predicting Forthcoming Emotional State",layout='centered',initial_sidebar_state='collapsed')
@@ -19,17 +19,15 @@ st.header("Detecting Emotional state of the person through video")
 
 def run_detection():
     st.cache_resource()
-    def load_model():
-        # Load the Emotion Detector json and weights
-        json_file = open('Model_json.json', 'r')
-        loaded_model_json = json_file.read()
-        json_file.close()
-        classifier = model_from_json(loaded_model_json)
-        classifier.load_weights("Model_Weights.h5")
-        face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+    def _load_model():
+        # Load the model directly from the .h5 file, which contains both the architecture and weights
+        model_path = os.path.join(os.path.dirname(__file__), "utils", "Model.h5")
+        cascade_classifier_path = os.path.join(os.path.dirname(__file__), "utils", "haarcascade_frontalface_default.xml")
+        classifier = load_model(model_path)
+        face_cascade = cv2.CascadeClassifier(cascade_classifier_path)
         return classifier, face_cascade
 
-    classifier, face_cascade = load_model()
+    classifier, face_cascade = _load_model()
 
     # Create dataframe
     emotion_df = pd.DataFrame(columns=emotion_labels)
@@ -38,7 +36,8 @@ def run_detection():
 
     if file is not None:
         # Save the uploaded file to a temporary location
-        temp_file_path = f"./temp_video.{file.name.split('.')[-1]}"
+        temp_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "utils", "temp_video")
+        temp_file_path = f"{temp_file_path}.{file.name.split('.')[-1]}"
         with open(temp_file_path, "wb") as temp_file:
             temp_file.write(file.read())
 
@@ -54,7 +53,7 @@ def run_detection():
 
         # Define the codec and create a video writer object
         fourcc = cv2.VideoWriter_fourcc(*'H264')
-        out_path = r'C:/Users/pandi/Visual_Studio_code/Mini_Project/output_video.mp4'
+        out_path = os.path.join(os.path.dirname(__file__), "output", "output_video.mp4") 
         out = cv2.VideoWriter(out_path, fourcc, fps, (width, height))
 
         while True:
@@ -95,7 +94,7 @@ def run_detection():
 
             frame_count += 1
             if frame_count % save_interval == 0:
-                emotion_df.to_csv('emotions_data.csv', index=False)
+                emotion_df.to_csv(os.path.join(os.path.dirname(os.path.abspath(__file__)),'extracted_data','emotions_data.csv'), index=False)
 
             # Write the frame to the video file
             out.write(frame)
@@ -115,6 +114,7 @@ def run_detection():
             if os.path.isfile(out_path):
                 os.remove(out_path)
                 os.remove(temp_file_path)
+                st.stop()
         st.info("Note:Output video will be deleted after you click the Done button")
 
 run_detection()

@@ -1,0 +1,9 @@
+# Ignore the following files
+*.pyc
+
+# Ignore the following directories
+__pycache__
+*.egg-info
+
+# Ignore the following python files
+/sample.py
