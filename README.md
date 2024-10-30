@@ -75,7 +75,7 @@ To run the project locally, follow these steps:
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/chandru-g24/Emotion_Prediction.git
+    git clone https://github.com/itzmechandruganeshan/Emotion_Prediction.git
     ```
 
 2. Navigate to the project directory:
